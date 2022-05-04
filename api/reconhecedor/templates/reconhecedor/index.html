@@ -1,0 +1,15 @@
+<h1>Reconhecedor de fotos</h1>
+<p>Envie uma foto para que o sistema a classifique em uma das 10 classes do dataset Fashion MNIST.</p>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form }}
+  <div style="margin-top: 20px;">
+    <button type="submit">ENVIAR ARQUIVO</button>
+  </div>
+  {% if predicted %}
+    <div style="margin-top: 20px">
+      Sua foto foi reconhecida como <strong>{{ predicted }}</strong> (precisão de {{ precision }}).
+    </div>
+  {% endif %}
+</form>
