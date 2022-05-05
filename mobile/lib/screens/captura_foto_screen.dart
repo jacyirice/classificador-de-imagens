@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:classificador_fotos/screens/classificador_screen.dart';
-import 'package:classificador_fotos/widgets/elevated_button_camera.dart';
 import 'package:flutter/material.dart';
 
 class CapturaFotoScreen extends StatefulWidget {
@@ -21,16 +20,16 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
   int cameraIndex = 0;
+  FlashMode _currentFlashMode = FlashMode.off;
 
   @override
   void initState() {
     super.initState();
     _controller = CameraController(
       widget.cameras[cameraIndex],
-      ResolutionPreset.ultraHigh,
+      ResolutionPreset.medium,
     );
     _initializeControllerFuture = _controller.initialize();
-    _controller.setFlashMode(FlashMode.off).then((value) => null);
   }
 
   @override
@@ -80,8 +79,9 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildButtonTakePicture(),
                     _buildButtonSwitchCamera(),
+                    _buildButtonTakePicture(),
+                    if (cameraIndex == 0) _buildButtonModeFlash(),
                   ],
                 ),
               ),
@@ -95,11 +95,12 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
   }
 
   _buildButtonTakePicture() {
-    return ElevatedButtonCamera(
-      onPressed: () async {
+    return InkWell(
+      onTap: () async {
         try {
           await _initializeControllerFuture;
           final image = await _controller.takePicture();
+          await _controller.setFlashMode(FlashMode.off);
           await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => ClassificadorScreen(imagePath: image.path),
@@ -109,30 +110,69 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
           print(e);
         }
       },
-      icon: const Icon(Icons.camera_alt_outlined),
-      color: Colors.lightBlue,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          const Icon(Icons.circle, color: Colors.white38, size: 80),
+          const Icon(Icons.circle, color: Colors.white, size: 65),
+        ],
+      ),
     );
   }
 
   _buildButtonSwitchCamera() {
-    return ElevatedButtonCamera(
-      onPressed: () {
+    return InkWell(
+      onTap: () {
         if (cameraIndex == widget.cameras.length - 1) {
           cameraIndex = 0;
         } else {
           cameraIndex++;
         }
         setState(() {
-          _controller.dispose();
           _controller = CameraController(
             widget.cameras[cameraIndex],
-            ResolutionPreset.ultraHigh,
+            ResolutionPreset.medium,
           );
           _initializeControllerFuture = _controller.initialize();
         });
       },
-      icon: const Icon(Icons.cameraswitch_outlined),
-      color: Colors.pink,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          const Icon(
+            Icons.circle,
+            color: Colors.black38,
+            size: 60,
+          ),
+          Icon(
+            cameraIndex == 1 ? Icons.camera_rear : Icons.camera_front,
+            color: Colors.white,
+            size: 30,
+          ),
+        ],
+      ),
+    );
+  }
+
+  _buildButtonModeFlash() {
+    return InkWell(
+      onTap: () async {
+        _currentFlashMode != FlashMode.off
+            ? _currentFlashMode = FlashMode.off
+            : _currentFlashMode = FlashMode.torch;
+        await _controller.setFlashMode(_currentFlashMode);
+        setState(() {});
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          const Icon(Icons.circle, color: Colors.black, size: 60),
+          if (_currentFlashMode == FlashMode.off)
+            const Icon(Icons.flash_off, color: Colors.white)
+          else
+            const Icon(Icons.highlight, color: Colors.amber),
+        ],
+      ),
     );
   }
 }
