@@ -15,7 +15,7 @@ postData(File file) async {
     Response response = await dio.post(url, data: formData);
     return response.data;
   } catch (e) {
-    print(e);
+    // print(e);
   }
 }
 
