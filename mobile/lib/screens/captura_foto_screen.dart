@@ -28,6 +28,7 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
     _controller = CameraController(
       widget.cameras[cameraIndex],
       ResolutionPreset.medium,
+      enableAudio: false,
     );
     _initializeControllerFuture = _controller.initialize();
   }
@@ -107,14 +108,14 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
             ),
           );
         } catch (e) {
-          print(e);
+          // print(e);
         }
       },
       child: Stack(
         alignment: Alignment.center,
-        children: [
-          const Icon(Icons.circle, color: Colors.white38, size: 80),
-          const Icon(Icons.circle, color: Colors.white, size: 65),
+        children: const [
+          Icon(Icons.circle, color: Colors.white38, size: 80),
+          Icon(Icons.circle, color: Colors.white, size: 65),
         ],
       ),
     );
@@ -132,6 +133,7 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
           _controller = CameraController(
             widget.cameras[cameraIndex],
             ResolutionPreset.medium,
+            enableAudio: false,
           );
           _initializeControllerFuture = _controller.initialize();
         });
