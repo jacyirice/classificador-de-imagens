@@ -31,7 +31,7 @@ class ClassificadorScreen extends StatefulWidget {
 class _ClassificadorScreenState extends State<ClassificadorScreen> {
   File? _pickedFile;
   File? _croppedFile;
-
+  bool _isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -42,7 +42,7 @@ class _ClassificadorScreenState extends State<ClassificadorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Redimensionar imagem'),
+        title: const Text('Classificar imagem'),
       ),
       body: _imageCard(),
     );
@@ -121,18 +121,26 @@ class _ClassificadorScreenState extends State<ClassificadorScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 32.0),
             child: FloatingActionButton(
-              heroTag: const Text("crop"),
+              heroTag: const Text("send"),
               onPressed: () async {
+                setState(() {
+                  _isLoading = true;
+                });
                 final response = await postData(_croppedFile!);
                 _showResultadoClassificacao(
                   context,
                   response['predicted'],
                   response['precision'],
                 );
+                setState(() {
+                  _isLoading = false;
+                });
               },
               backgroundColor: Colors.green,
               tooltip: 'Continuar',
-              child: const Icon(Icons.arrow_forward),
+              child: _isLoading
+                  ? const CircularProgressIndicator()
+                  : const Icon(Icons.arrow_forward),
             ),
           )
       ],
@@ -148,7 +156,7 @@ class _ClassificadorScreenState extends State<ClassificadorScreen> {
           toolbarColor: Colors.black,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false),
+          lockAspectRatio: true),
       iosUiSettings: const IOSUiSettings(
         title: 'Recortar imagem',
       ),
