@@ -76,22 +76,24 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
                 ),
               ),
               const SizedBox(height: 30),
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildButtonSwitchCamera(),
-                    _buildButtonTakePicture(),
-                    if (cameraIndex == 0) _buildButtonModeFlash(),
-                  ],
-                ),
-              ),
+              _buildCameraControls(),
             ],
           );
         } else {
           return const Center(child: CircularProgressIndicator());
         }
       },
+    );
+  }
+
+  _buildCameraControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildButtonSwitchCamera(),
+        _buildButtonTakePicture(),
+        if (cameraIndex == 0) _buildButtonModeFlash(),
+      ],
     );
   }
 
