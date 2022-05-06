@@ -24,6 +24,7 @@ As seguintes ferramentas foram usadas na construção do projeto:
 
 ## Desenvolvido por
 [Jacyiricê Silva Oliveira](https://github.com/jacyirice/)
+
 [Rayanna Quirino](https://github.com/rayannaQuirino)
 
 ## Disponivel em 
