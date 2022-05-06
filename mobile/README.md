@@ -1,16 +1,30 @@
-# classificador_fotos
+# Classificador de fotos - Mobile
+Aplicação desenvolvida a fim de permitir o usuário mobile enviar uma foto (tirando uma foto com a câmera do dispositivo, como o smartphone) e classificar a foto em uma das 10 classes do Fashion MNIST, utilizando a api.
 
-A new Flutter project.
+### Video de apresentação
+[![Assista o video](https://i.imgur.com/SdQ5CxC.png)](https://www.youtube.com/watch?v=uQgNeoP9KpY)
 
-## Getting Started
+## 🛠 Tecnologias
 
-This project is a starting point for a Flutter application.
+As seguintes ferramentas foram usadas na construção do projeto:
 
-A few resources to get you started if this is your first Flutter project:
+- [Flutter](https://flutter.dev/)
+- [Dart](https://dart.dev/)
+- [Camera Plugin](https://pub.dev/packages/camera)
+- [Path](https://pub.dev/packages/path)
+- [Dio](https://pub.dev/packages/dio)
+- [Image Cropper](https://pub.dev/packages/image_cropper)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Funcionalidades
+- [x] Captura de imagens
+- [x] Ativação/Desativação do flash
+- [x] Alternarção entre camera frontal e traseira
+- [x] Ajustes de imagem
+- [x] Classificação de imagem
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Desenvolvido por
+[Jacyiricê Silva Oliveira](https://github.com/jacyirice/)
+[Rayanna Quirino](https://github.com/rayannaQuirino)
+
+## Disponivel em 
+[GitHub](https://github.com/jacyirice/classificador-de-imagens)
