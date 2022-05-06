@@ -42,7 +42,7 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Capture uma foto')),
+      appBar: _buildAppBar(),
       body: _buildBody(),
     );
   }
@@ -56,11 +56,24 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
     _controller.setFocusPoint(offset);
   }
 
+  _buildAppBar() {
+    return AppBar(
+      title: const Text('Capture uma foto'),
+      centerTitle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(20),
+        ),
+      ),
+    );
+  }
+
   _buildBody() {
     return FutureBuilder<void>(
       future: _initializeControllerFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          _controller.setFlashMode(_currentFlashMode);
           return Column(
             children: [
               CameraPreview(
@@ -110,7 +123,7 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
             ),
           );
         } catch (e) {
-          // print(e);
+          _showSnackBar(e.toString(), true);
         }
       },
       child: Stack(
@@ -137,17 +150,14 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
             ResolutionPreset.medium,
             enableAudio: false,
           );
+          _currentFlashMode = FlashMode.off;
           _initializeControllerFuture = _controller.initialize();
         });
       },
       child: Stack(
         alignment: Alignment.center,
         children: [
-          const Icon(
-            Icons.circle,
-            color: Colors.black38,
-            size: 60,
-          ),
+          const Icon(Icons.circle, color: Colors.black38, size: 60),
           Icon(
             cameraIndex == 1 ? Icons.camera_rear : Icons.camera_front,
             color: Colors.white,
@@ -171,12 +181,26 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
         alignment: Alignment.center,
         children: [
           const Icon(Icons.circle, color: Colors.black, size: 60),
-          if (_currentFlashMode == FlashMode.off)
-            const Icon(Icons.flash_off, color: Colors.white)
+          if (_currentFlashMode != FlashMode.off)
+            const Icon(Icons.highlight, color: Colors.amber)
           else
-            const Icon(Icons.highlight, color: Colors.amber),
+            const Icon(Icons.flash_off, color: Colors.white),
         ],
       ),
     );
+  }
+
+  _showSnackBar(message, showAction) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      action: showAction
+          ? SnackBarAction(
+              label: 'Continuar',
+              onPressed: () {},
+            )
+          : null,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

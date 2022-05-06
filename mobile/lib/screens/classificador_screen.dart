@@ -6,19 +6,6 @@ import 'package:dio/dio.dart';
 
 const String url = 'https://classificadordeimagens.herokuapp.com/';
 
-postData(File file) async {
-  Dio dio = Dio();
-  try {
-    FormData formData = FormData.fromMap({
-      "file": await MultipartFile.fromFile(file.path, filename: "file.jpg"),
-    });
-    Response response = await dio.post(url, data: formData);
-    return response.data;
-  } catch (e) {
-    // print(e);
-  }
-}
-
 class ClassificadorScreen extends StatefulWidget {
   const ClassificadorScreen({Key? key, required this.imagePath})
       : super(key: key);
@@ -41,10 +28,20 @@ class _ClassificadorScreenState extends State<ClassificadorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Classificar imagem'),
-      ),
+      appBar: _buildAppBar(),
       body: _imageCard(),
+    );
+  }
+
+  _buildAppBar() {
+    return AppBar(
+      title: const Text('Classificar imagem'),
+      centerTitle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(20),
+        ),
+      ),
     );
   }
 
@@ -126,12 +123,20 @@ class _ClassificadorScreenState extends State<ClassificadorScreen> {
                 setState(() {
                   _isLoading = true;
                 });
-                final response = await postData(_croppedFile!);
-                _showResultadoClassificacao(
-                  context,
-                  response['predicted'],
-                  response['precision'],
-                );
+                final response = await _postData(_croppedFile!);
+                if (response == null) {
+                  _showSnackBar('Algo inexperado aconteceu:(', true);
+                } else if (response.statusCode == 200) {
+                  _showResultadoClassificacao(
+                    context,
+                    response.data['predicted'],
+                    response.data['precision'],
+                  );
+                } else if (response.data['file'] != null) {
+                  _showSnackBar(response.data['file'].join('\n'), true);
+                } else {
+                  _showSnackBar('Algo inexperado aconteceu:(', true);
+                }
                 setState(() {
                   _isLoading = false;
                 });
@@ -152,11 +157,12 @@ class _ClassificadorScreenState extends State<ClassificadorScreen> {
       sourcePath: _pickedFile!.path,
       aspectRatioPresets: [CropAspectRatioPreset.square],
       androidUiSettings: const AndroidUiSettings(
-          toolbarTitle: 'Recortar imagem',
-          toolbarColor: Colors.black,
-          toolbarWidgetColor: Colors.white,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: true),
+        toolbarTitle: 'Recortar imagem',
+        toolbarColor: Colors.black,
+        toolbarWidgetColor: Colors.white,
+        initAspectRatio: CropAspectRatioPreset.original,
+        lockAspectRatio: true,
+      ),
       iosUiSettings: const IOSUiSettings(
         title: 'Recortar imagem',
       ),
@@ -172,8 +178,32 @@ class _ClassificadorScreenState extends State<ClassificadorScreen> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Sua foto foi reconhecida como $predicted;'),
-          Text('Precisão: ${precision * 100}%.'),
+          RichText(
+            text: TextSpan(
+              style: const TextStyle(
+                fontSize: 15.0,
+              ),
+              children: <TextSpan>[
+                const TextSpan(text: 'Sua foto foi reconhecida como: '),
+                TextSpan(
+                    text: predicted,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          RichText(
+            text: TextSpan(
+              style: const TextStyle(
+                fontSize: 15.0,
+              ),
+              children: <TextSpan>[
+                const TextSpan(text: 'Precisão: '),
+                TextSpan(
+                    text: '${(precision * 100).round()}%.',
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -183,5 +213,44 @@ class _ClassificadorScreenState extends State<ClassificadorScreen> {
         return alert;
       },
     );
+  }
+
+  _postData(File file) async {
+    Dio dio = Dio();
+    try {
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(file.path, filename: "file.jpg"),
+      });
+      Response response = await dio.post(url, data: formData);
+      return response;
+    } on DioError catch (e) {
+      if (e.response != null) {
+        return e.response!;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  _showSnackBar(message, showAction) {
+    final snackBar = SnackBar(
+      duration: const Duration(seconds: 10),
+      content: Text(message),
+      action: !showAction
+          ? SnackBarAction(
+              label: 'Continuar',
+              onPressed: () {},
+            )
+          : null,
+      margin: const EdgeInsets.all(20),
+      behavior: SnackBarBehavior.floating,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(20),
+        ),
+      ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
