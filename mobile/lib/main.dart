@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
   }
 
   Widget _checkPermission(PermissionStatus permission) {
-    if (permission != PermissionStatus.granted) {
+    if (permission.isPermanentlyDenied) {
       return Padding(
         padding: const EdgeInsets.all(12.0),
         child: Center(
