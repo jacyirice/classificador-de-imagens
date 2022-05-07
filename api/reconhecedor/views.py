@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from PIL import Image, ImageOps
+from PIL import Image
 from django.conf import settings
 from django.http.response import JsonResponse
 from django.utils.translation import gettext_lazy as _
@@ -10,7 +10,6 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.decorators import parser_classes
 
 from .serializers import ImageSerializer
-
 
 @api_view(['POST'])
 @parser_classes([MultiPartParser])
@@ -22,12 +21,11 @@ def index(request):
 
     if serializer.is_valid(raise_exception=True):
         model = tf.keras.models.load_model(settings.BASE_DIR / 'my_model.h5')
-        img = Image.open(serializer.validated_data['file'])
-        img = ImageOps.grayscale(img)
-        output_size = (28, 28)
-        img.thumbnail(output_size)
 
-        im2array = np.array(img)
+        img = Image.open(serializer.validated_data['file'] ).convert('L')
+        img = img.resize((28, 28))
+        
+        im2array = np.array(img) / 255.0
         im2array = (np.expand_dims(im2array, 0))
 
         predictions_single = model.predict(im2array)
