@@ -116,7 +116,8 @@ class CapturaFotoScreenState extends State<CapturaFotoScreen> {
         try {
           await _initializeControllerFuture;
           final image = await _controller.takePicture();
-          await _controller.setFlashMode(FlashMode.off);
+          _currentFlashMode = FlashMode.off;
+          await _controller.setFlashMode(_currentFlashMode);
           await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => ClassificadorScreen(imagePath: image.path),
