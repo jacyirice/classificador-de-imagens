@@ -2,7 +2,7 @@
 Aplicação desenvolvida a fim de permitir o usuário mobile enviar uma foto (tirando uma foto com a câmera do dispositivo, como o smartphone) e classificar a foto em uma das 10 classes do Fashion MNIST, utilizando a api.
 
 ### Video de apresentação
-[![Assista o video](https://i.imgur.com/SdQ5CxC.png)](https://www.youtube.com/watch?v=uQgNeoP9KpY)
+[![Assista o video](https://img.youtube.com/vi/t2sdFbWaOkM/maxresdefault.jpg)](https://youtu.be/t2sdFbWaOkM)
 
 ## 🛠 Tecnologias
 
