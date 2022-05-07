@@ -1,4 +1,4 @@
-# Classificador de fotos - Mobile
+# Classificador de fotos - API Rest
 API Rest desenvolvida para permitir que usuários de diferentes plataformas enviem fotos e utilize a rede neural para classificar a foto em uma das 10 classes do dataset Fashion MNIST.
 
 ### Documentação da API
